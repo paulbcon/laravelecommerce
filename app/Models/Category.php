@@ -13,4 +13,13 @@ class Category extends Model
 
     protected $guarded = [];
 
+    public function scopeStatus($query)
+    {
+        return $query->where('status','0');
+    }
+
+    public function products() {
+        return $this->hasMany(Product::class);
+    }
+
 }

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,10 @@ Route::middleware(['auth:sanctum','isAPIAdmin'])->group(function () {
 
     // Category
     Route::apiResource('categories',CategoryController::class);
+    Route::get('all-category',[CategoryController::class, 'allcategory']);
+
+    //Product
+    Route::apiResource('products',ProductController::class);
 
 });
 

@@ -162,4 +162,15 @@ class CategoryController extends Controller
             ]);
         }
     }
+
+    public function allcategory()
+    {
+        $category = Category::status()->get();
+
+        return response()->json([
+            'status' => 200,
+            'category' => $category
+        ]);
+
+    }
 }
