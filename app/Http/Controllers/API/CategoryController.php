@@ -16,7 +16,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $category = Category::all();
+
+        return response()->json([
+            'status' => 200,
+            'category' => $category
+        ]);
     }
 
     /**
@@ -68,7 +73,19 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category = Category::find($id);
+        if ($category)
+        {
+            return response()->json([
+                'status' => 200,
+                'category' => $category
+            ]);
+        } else {
+            return response()->json([
+                'status' => 400,
+                'category' => 'No Category Found'
+            ]);
+        }
     }
 
     /**
@@ -80,7 +97,46 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $input = $request->input();
+
+        $validator = Validator::make($request->all(), [
+            'meta_title' => 'required|max:191',
+            'slug' => 'required|max:191',
+            'name' => 'required|max:191'
+        ]);
+
+        if ($validator->fails())
+        {
+           return response()->json([
+                'status' => 422,
+                'errors' => $validator->errors(),
+           ]);
+        }
+
+        $data = array(
+            'meta_title' => $input['meta_title'],
+            'meta_keyword' => $input['meta_keyword'],
+            'meta_description' => $input['meta_description'],
+            'slug' => $input['slug'],
+            'name' => $input['name'],
+            'description' => $input['description'],
+            'status' => $input['status'] == true ? '1' : '0'
+        );
+
+        $category = Category::whereId($id)->update($data);
+
+        if ($category)
+        {
+            return response()->json([
+                'status' => 200,
+                'message' => 'Category Updated Successfully',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Failed to Update Category or Category Not Found',
+            ]);
+        }
     }
 
     /**
@@ -91,6 +147,19 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $category = Category::findOrFail($id)->delete();
+
+        if ($category)
+        {
+            return response()->json([
+                'status' => 200,
+                'message' => 'Category Deleted Successfully'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No Category Found'
+            ]);
+        }
     }
 }
