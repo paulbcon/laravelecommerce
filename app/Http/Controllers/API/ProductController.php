@@ -16,7 +16,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-
+        $product = Product::with('category')->get();
+        return response()->json([
+            'status' => 200,
+            'product' => $product
+        ]);
     }
 
     /**
@@ -56,11 +60,13 @@ class ProductController extends Controller
 
                 $destination_path = $fileDir.'/uploads/product/';
 
+                $getpublic_path = 'storage/uploads/product/';
+
                 $file = $request->file('image');
                 $extension = $file->getClientOriginalExtension();
                 $filename = $input['slug'].'-'.time().'.'.$extension;
                 $file->move($destination_path, $filename);
-                $product->image = $destination_path.$filename;
+                $product->image = $getpublic_path.$filename;
             }
 
                 $product->category_id = $input['category_id'];
