@@ -183,9 +183,9 @@ class ProductController extends Controller
                     $product->selling_price = $input['selling_price'];
                     $product->original_price = $input['original_price'];
                     $product->quantity = $input['quantity'];
-                    $product->featured = $input['featured'] == true ? '1':'0';
-                    $product->popular = $input['popular'] == true ? '1':'0';
-                    $product->status = $input['status'] == true ? '1':'0';
+                    $product->featured = $input['featured'];
+                    $product->popular = $input['popular'];
+                    $product->status = $input['status'];
     
     
                 $product->update();
