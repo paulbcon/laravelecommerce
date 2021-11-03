@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\FrontendController;
-
+use App\Http\Controllers\API\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +23,7 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::get('getCategory',[FrontendController::class,'category']);
 Route::get('fetchproducts/{slug}',[FrontendController::class,'product']);
+Route::get('view-product/{category_slug}/{product_slug}', [FrontendController::class,'viewproduct']);
 
 Route::middleware(['auth:sanctum','isAPIAdmin'])->group(function () {
     Route::get('/checkingAuthenticated', function() {

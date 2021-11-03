@@ -16,7 +16,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::with('category')->get();
+        $product = Product::get();
         return response()->json([
             'status' => 200,
             'product' => $product
@@ -40,6 +40,7 @@ class ProductController extends Controller
             'meta_title'=>'required|max:191',
             'selling_price'=>'required',
             'original_price'=>'required',
+            'karat'=>'required',
             'quantity' => 'required|max:4',
             'image' => 'required|image|mimes:jpeg,png,jpeg|max:2048',
         ]);
@@ -79,6 +80,7 @@ class ProductController extends Controller
                 $product->selling_price = $input['selling_price'];
                 $product->original_price = $input['original_price'];
                 $product->quantity = $input['quantity'];
+                $product->karat = $input['karat'];
                 $product->featured = $input['featured'] == true ? '1':'0';
                 $product->popular = $input['popular'] == true ? '1':'0';
                 $product->status = $input['status'] == true ? '1':'0';
@@ -127,7 +129,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
         $input = $request->input();
 
         $validator = Validator::make($request->all(), [
@@ -137,6 +139,7 @@ class ProductController extends Controller
             'meta_title'=>'required|max:191',
             'selling_price'=>'required',
             'original_price'=>'required',
+            'karat'=> 'required',
             'quantity' => 'required|max:4',
         ]);
 
@@ -158,21 +161,21 @@ class ProductController extends Controller
                 if(\File::exists(public_path($path))){
 
                     \File::delete(public_path($path));
-                }    
-                                       
+                }
+
                     $fileDir = storage_path('app/public');
-    
+
                     $destination_path = $fileDir.'/uploads/product/';
-    
+
                     $getpublic_path = 'storage/uploads/product/';
-    
+
                     $file = $request->file('image');
                     $extension = $file->getClientOriginalExtension();
                     $filename = $input['slug'].'-'.time().'.'.$extension;
                     $file->move($destination_path, $filename);
                     $product->image = $getpublic_path.$filename;
                 }
-    
+
                     $product->category_id = $input['category_id'];
                     $product->slug = $input['slug'];
                     $product->name = $input['name'];
@@ -183,26 +186,27 @@ class ProductController extends Controller
                     $product->selling_price = $input['selling_price'];
                     $product->original_price = $input['original_price'];
                     $product->quantity = $input['quantity'];
+                    $product->karat = $input['karat'];
                     $product->featured = $input['featured'];
                     $product->popular = $input['popular'];
                     $product->status = $input['status'];
-    
-    
+
+
                 $product->update();
-    
+
                 return response()->json([
                     'status' => 200,
                     'message' => 'Product Updated Successfully'
-                ]);    
+                ]);
             } else {
                 return response()->json([
                     'status' => 404,
                     'message' => 'Product Not Found'
                 ]);
             }
-            
+
         }
-        
+
     }
 
     /**
