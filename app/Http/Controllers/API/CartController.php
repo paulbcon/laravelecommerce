@@ -84,21 +84,32 @@ class CartController extends Controller
     {
         if (auth('sanctum')->check())
         {
-             $user_id = auth('sanctum')->user()->id;
-             $cartitem = CartProduct::where('cart_id',$cart_id)->where('user_id', $user_id)->first();
-
-             if ($scope == "inc"){
-                 $cartitem->quantity += 1;
-             } else {
-                 $cartitem->quantity -= 1;
-             }
-
-             $cartitem->update();
+              $user_id = auth('sanctum')->user()->id;
+              $where = [
+                'cart_id' => $cart_id,
+                'user_id' => $user_id,
+              ];
+              $cartitem = CartProduct::where($where)->first();
+               
+              if ($cartitem)
+              {
+                $cartitemquantity = $cartitem->quantity; 
+                if ($scope == "inc"){
+                    CartProduct::where($where)->update([
+                        'quantity' => $cartitemquantity += 1
+                    ]);    
+                } else {
+                    CartProduct::where($where)->update([
+                        'quantity' => $cartitemquantity -= 1
+                    ]);    
+                }
+                
 
             return response()->json([
                 'status' => 200,
                 'message' => "Quantity Updated",
             ]);
+            }
 
         }
         else {
