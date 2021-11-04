@@ -94,6 +94,7 @@ class CartController extends Controller
               if ($cartitem)
               {
                 $cartitemquantity = $cartitem->quantity; 
+                //eloquent way 
                 if ($scope == "inc"){
                     CartProduct::where($where)->update([
                         'quantity' => $cartitemquantity += 1
