@@ -90,21 +90,21 @@ class CartController extends Controller
                 'user_id' => $user_id,
               ];
               $cartitem = CartProduct::where($where)->first();
-               
+
               if ($cartitem)
               {
-                $cartitemquantity = $cartitem->quantity; 
-                //eloquent way 
+                $cartitemquantity = $cartitem->quantity;
+                //eloquent way
                 if ($scope == "inc"){
                     CartProduct::where($where)->update([
                         'quantity' => $cartitemquantity += 1
-                    ]);    
+                    ]);
                 } else {
                     CartProduct::where($where)->update([
                         'quantity' => $cartitemquantity -= 1
-                    ]);    
+                    ]);
                 }
-                
+
 
             return response()->json([
                 'status' => 200,
@@ -114,6 +114,38 @@ class CartController extends Controller
 
         }
         else {
+            return response()->json([
+                'status' => 401,
+                'message' => "Login to continue",
+            ]);
+        }
+    }
+
+    public function deleteCartItem($cart_id)
+    {
+        if (auth('sanctum')->check())
+        {
+            $user_id = auth('sanctum')->user()->id;
+            $where = [
+              'cart_id' => $cart_id,
+              'user_id' => $user_id,
+            ];
+            $cartitem = CartProduct::where($where)->first();
+
+            if ($cartitem)
+            {
+                CartProduct::where($where)->delete();
+                return response()->json([
+                    'status' => 200,
+                    'message' => "Cart Item Removed Successfully",
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => "Cart Item Not Found",
+                ]);
+            }
+        } else {
             return response()->json([
                 'status' => 401,
                 'message' => "Login to continue",
