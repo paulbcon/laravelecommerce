@@ -69,7 +69,7 @@ abstract class Stamps
         return preg_replace("@\r\n@", "", $xml);
     }
 
-    public function connect($url, $xml, $header)
+    public function connect($url, $xml, $header=null)
     {
 
         $soap_do = curl_init();

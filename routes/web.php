@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('stampaccountinfo',[StampController::class,'getInfo']);
-
+Route::get('stampauthenticateuser',[StampController::class,'getAuthenticateUser']);
+Route::get('stampgetaccountinfo',[StampController::class, 'getAccountInfo']);
+Route::get('purchasepostage',[StampController::class,'purchasePostage']);
 // Route::get('/', function () {
 //     return view('welcome');
 // });
