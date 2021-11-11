@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Cart;
 use App\Models\Order;
+use App\Models\CartProduct;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\CartProduct;
 use Illuminate\Support\Facades\Validator;
 
 class CheckoutController extends Controller
@@ -63,15 +64,20 @@ class CheckoutController extends Controller
                     $item->product->update([
                         'quantity' => $item->product->quantity - $item->quantity
                     ]);
+
+
+                    $order->orderproducts()->createMany($orderitems);
+
+                    CartProduct::where('user_id',$userid)->delete();
+                    Cart::where('user_id',$userid)->delete();
+
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Order Placed Successfully',
+                    ]);
+
                 }
 
-               
-
-
-                return response()->json([
-                    'status' => 200,
-                    'message' => 'Order Placed Successfully',
-                ]);
             }
         } else {
             return response()->json([
