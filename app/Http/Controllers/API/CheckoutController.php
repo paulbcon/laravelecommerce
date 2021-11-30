@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use Stripe\Stripe;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\CartProduct;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Stripe\PaymentIntent;
 
 class CheckoutController extends Controller
 {
@@ -32,8 +34,8 @@ class CheckoutController extends Controller
                     'status' => 422,
                     'errors' => $validator->errors(),
                 ]);
-            } else {
-
+            } else
+             {
                 $userid = auth('sanctum')->user()->id;
                 $order = new Order();
                 $order->user_id = $userid;
@@ -46,7 +48,7 @@ class CheckoutController extends Controller
                 $order->state = $request->state;
                 $order->zipcode = $request->zipcode;
 
-                $order->payment_mode = "COD";
+                $order->payment_mode = $request->payment_mode;
                 $order->tracking_no = "ARLENEDUBAIGOLD".rand(1111111,999999);
                 $order->save();
 
@@ -85,5 +87,66 @@ class CheckoutController extends Controller
                 'message' => 'Login to Continue'
             ]);
         }
+    }
+
+    public function validateOrder(Request $request)
+    {
+        if (auth('sanctum')->check())
+        {
+            $validator = Validator::make($request->all(), [
+                'firstname'=> 'required|max:191',
+                'lastname' => 'required|max:191',
+                'phone' => 'required:max:12',
+                'email' => 'required|email',
+                'address'=> 'required',
+                'city' => 'required',
+                'state' => 'required|min:2|max:191',
+                'zipcode'=>'required'
+            ]);
+
+            if ($validator->fails())
+            {
+                return response()->json([
+                    'status' => 422,
+                    'errors' => $validator->errors(),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Form Validated Successfully',
+                ]);
+            }
+        }
+        else {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Login to Continue'
+            ]);
+        }
+    }
+
+    public function charge(Request $request)
+    {
+        //Set your secret key
+        Stripe::setApiKey(env("STRIPE_SECRET"));
+
+        $intent = PaymentIntent::create(
+            [
+                'amount' => $request->amount * 100,
+                'currency' => "usd",
+                'automatic_payment_methods' => [
+                    'enabled' => true
+                ],
+            ]
+            );
+
+        $client_secret = $intent->client_secret;
+
+        //Pass the client secret to the client
+        return response()->json([
+            'status' => 200,
+            'clientSecret' => $client_secret
+        ]);
+
     }
 }
