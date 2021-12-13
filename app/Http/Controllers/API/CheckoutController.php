@@ -125,28 +125,5 @@ class CheckoutController extends Controller
         }
     }
 
-    public function charge(Request $request)
-    {
-        //Set your secret key
-        Stripe::setApiKey(env("STRIPE_SECRET"));
 
-        $intent = PaymentIntent::create(
-            [
-                'amount' => $request->amount * 100,
-                'currency' => "usd",
-                'automatic_payment_methods' => [
-                    'enabled' => true
-                ],
-            ]
-            );
-
-        $client_secret = $intent->client_secret;
-
-        //Pass the client secret to the client
-        return response()->json([
-            'status' => 200,
-            'clientSecret' => $client_secret
-        ]);
-
-    }
 }
